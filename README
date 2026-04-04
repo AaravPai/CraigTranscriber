@@ -1,0 +1,76 @@
+# Craig Transcriber
+
+A Python tool for turning Craig Discord recordings into readable, speaker-labeled transcripts.
+
+This project is built for Discord-based sessions like D&D games. Instead of recording voice directly from Discord, it uses multitrack audio exported from Craig, transcribes each speaker track, and produces a merged transcript with timestamps.
+
+## Features
+
+- Uses Craig multitrack recordings from Discord
+- Supports separate speaker audio tracks
+- Transcribes speech with the OpenAI API
+- Splits tracks into smaller speech chunks
+- Produces a timestamped transcript in timeline order
+
+## Project Structure
+
+```text
+CraigTranscriber/
+├─ .env
+├─ .gitignore
+├─ requirements.txt
+├─ input_zips/
+├─ extracted/
+├─ outputs/
+├─ temp_chunks/
+└─ src/
+   ├─ main.py
+   ├─ config.py
+   ├─ extract.py
+   ├─ discover.py
+   ├─ chunk.py
+   ├─ transcribe.py
+   └─ merge.py
+
+
+Setup
+Clone the repo
+Create and activate a virtual environment
+Install dependencies
+Add your OpenAI API key to .env
+
+
+Create virtual environment
+py -3 -m venv .venv
+.venv\Scripts\Activate.ps1
+
+Install dependencies
+python -m pip install -r requirements.txt
+
+.env
+Create a .env file in the project root:
+OPENAI_API_KEY=your_openai_api_key_here
+TRANSCRIPTION_MODEL=gpt-4o-transcribe
+
+How to Use
+1. Record a Discord session using Craig
+2. Download the multitrack FLAC ZIP from Craig
+3. Place the ZIP file into the input_zips/ folder
+4. Run the script: python .\src\main.py
+
+
+Current Status
+
+The core pipeline is working:
+
+ZIP extraction
+speaker track discovery
+speech chunking
+transcription
+merged timestamped transcript output
+
+Planned improvements include:
+
+mapping Craig track names to actual Discord usernames
+better cleanup of temporary files
+D&D-specific summaries and notes generation
