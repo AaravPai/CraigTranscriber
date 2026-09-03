@@ -20,6 +20,35 @@ TEMP_CHUNKS_DIR.mkdir(parents=True, exist_ok=True)
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
 TRANSCRIPTION_MODEL = os.getenv("TRANSCRIPTION_MODEL", "gpt-4o-transcribe").strip()
 
+
+def _positive_int_env(name: str, default: int) -> int:
+    raw_value = os.getenv(name, str(default)).strip()
+    try:
+        value = int(raw_value)
+    except ValueError as exc:
+        raise ValueError(f"{name} must be an integer, received {raw_value!r}") from exc
+
+    if value < 1:
+        raise ValueError(f"{name} must be at least 1")
+    return value
+
+
+def _nonnegative_float_env(name: str, default: float) -> float:
+    raw_value = os.getenv(name, str(default)).strip()
+    try:
+        value = float(raw_value)
+    except ValueError as exc:
+        raise ValueError(f"{name} must be a number, received {raw_value!r}") from exc
+
+    if value < 0:
+        raise ValueError(f"{name} cannot be negative")
+    return value
+
+
+MAX_CONCURRENT_TRANSCRIPTIONS = _positive_int_env("MAX_CONCURRENT_TRANSCRIPTIONS", 4)
+MAX_TRANSCRIPTION_ATTEMPTS = _positive_int_env("MAX_TRANSCRIPTION_ATTEMPTS", 4)
+RETRY_BASE_DELAY_SECONDS = _nonnegative_float_env("RETRY_BASE_DELAY_SECONDS", 1.0)
+
 SUPPORTED_AUDIO_EXTENSIONS = {
     ".flac",
     ".wav",

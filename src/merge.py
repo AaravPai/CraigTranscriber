@@ -14,6 +14,27 @@ class ChunkTranscript:
     end_seconds: float
     text: str
 
+    def to_dict(self) -> dict[str, str | float]:
+        return {
+            "speaker_name": self.speaker_name,
+            "source_audio_file": self.source_audio_file,
+            "chunk_audio_file": self.chunk_audio_file,
+            "start_seconds": self.start_seconds,
+            "end_seconds": self.end_seconds,
+            "text": self.text,
+        }
+
+    @classmethod
+    def from_dict(cls, payload: dict[str, object]) -> "ChunkTranscript":
+        return cls(
+            speaker_name=str(payload["speaker_name"]),
+            source_audio_file=str(payload["source_audio_file"]),
+            chunk_audio_file=str(payload["chunk_audio_file"]),
+            start_seconds=float(payload["start_seconds"]),
+            end_seconds=float(payload["end_seconds"]),
+            text=str(payload["text"]),
+        )
+
 
 def format_timestamp(seconds: float) -> str:
     total = int(seconds)
@@ -27,17 +48,8 @@ def format_timestamp(seconds: float) -> str:
 
 
 def write_json(transcripts: list[ChunkTranscript], output_path: Path) -> None:
-    payload = [
-        {
-            "speaker_name": item.speaker_name,
-            "source_audio_file": item.source_audio_file,
-            "chunk_audio_file": item.chunk_audio_file,
-            "start_seconds": item.start_seconds,
-            "end_seconds": item.end_seconds,
-            "text": item.text,
-        }
-        for item in transcripts
-    ]
+    ordered = sorted(transcripts, key=lambda item: (item.start_seconds, item.speaker_name))
+    payload = [item.to_dict() for item in ordered]
 
     with output_path.open("w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2, ensure_ascii=False)
