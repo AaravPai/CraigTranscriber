@@ -75,6 +75,7 @@ def make_chunks_for_track(speaker_name: str, audio_path: Path) -> list[AudioChun
         full_audio,
         min_silence_len=MIN_SILENCE_LEN_MS,
         silence_thresh=silence_thresh,
+        seek_step = 20,
     )
 
     chunks: list[AudioChunk] = []
